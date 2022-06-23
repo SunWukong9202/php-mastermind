@@ -6,6 +6,7 @@
       'phone_number'=> $_POST['phone_number'],
     ];
     $contacts = json_decode(file_get_contents('bd.json'),true);
+    if(!isset($contacts)) $contacts = [];
     array_push($contacts,$contact); //alternativa a contacts.push()
     //guardar en json
     file_put_contents('bd.json', json_encode($contacts));
