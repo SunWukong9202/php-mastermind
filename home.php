@@ -14,6 +14,7 @@ $contacts = $conn->query("SELECT * FROM contacts WHERE user_id = {$_SESSION['use
 ?>
 
 <?php require "partials/header.php" ?>
+
     <div class="container pt-4 p-3">
       <div class="row">
         <?php if($contacts->rowCount() == 0): ?>

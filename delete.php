@@ -30,5 +30,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   $conn->prepare("DELETE FROM contacts WHERE id = :id")->execute([":id" => $contact['id']]);
 
+  $_SESSION['flash'] = ['msj' => "Contact {$contact['name']} deleted."];
+
   header("Location: home.php");
+  return;
 }

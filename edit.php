@@ -40,8 +40,11 @@
         ":phoneNumber" => $phoneNumber
       ]);
 
+      $_SESSION['flash'] = ['msj' => "Contact {$_POST['name']} updated."];
+
       header("Location: home.php");
-      } 
+      return;
+    } 
   }
 ?>
 

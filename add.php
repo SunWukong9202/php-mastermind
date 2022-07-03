@@ -22,12 +22,15 @@
 
       $statement = $conn->prepare("INSERT INTO contacts 
       (name,user_id, phone_number) VALUES (:name, $user_id,:phone_number)");
-      
+
       $statement->bindParam(":name", $_POST['name']);
       $statement->bindParam(":phone_number", $_POST['phone_number']);
       $statement->execute();
 
+      $_SESSION['flash'] = ['msj' => "Contact {$_POST['name']} added."];
+
       header("Location: home.php");
+      return;
     } 
 
   }
