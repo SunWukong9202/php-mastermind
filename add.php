@@ -1,6 +1,15 @@
 <?php
   require "db.php";
   $error = null;
+
+  session_start();
+
+
+  if(!isset($_SESSION['user'])) {
+    header('Location: login.php');
+    return;
+  }
+
   if($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(empty($_POST['name']) || empty($_POST['phone_number'])) {
       $error = "Please fill all the fields.";
@@ -9,8 +18,11 @@
     }else{
       $name = $_POST['name'];
       $phoneNumber = $_POST['phone_number'];
+      $user_id = $_SESSION['user']['id'];
 
-      $statement = $conn->prepare("INSERT INTO contacts (name, phone_number) VALUES (:name, :phone_number)");
+      $statement = $conn->prepare("INSERT INTO contacts 
+      (name,user_id, phone_number) VALUES (:name, $user_id,:phone_number)");
+      
       $statement->bindParam(":name", $_POST['name']);
       $statement->bindParam(":phone_number", $_POST['phone_number']);
       $statement->execute();

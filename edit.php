@@ -1,8 +1,14 @@
-<pre>
 <?php
-    require "db.php";
+  require "db.php";
   $error = null;
-  $id = $_GET['id'];
+  $id = $_GET['id'] ?? null;
+
+  session_start();
+
+  if(!isset($_SESSION['user'])) {
+    header('Location: login.php');
+    return;
+  }
 
   $stmt = $conn->prepare("SELECT * FROM contacts WHERE id = :id LIMIT 1");
   $stmt->execute([":id" => $id]); //array-as with all var to bind and execute in the stmt
@@ -11,8 +17,13 @@
     echo 'HTTP 404 NOT FOUND';
     return;
   }
-    
   $contact = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if($contact['user_id'] != $_SESSION['user']['id']) {
+    http_response_code(403);
+    echo 'HTTP 403 UNAUTHORIZED';
+    return;
+  }
 
   if($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(empty($_POST['name']) || empty($_POST['phone_number'])) {

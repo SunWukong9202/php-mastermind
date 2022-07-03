@@ -12,7 +12,6 @@ try{
   //   print_r($row);
   //   echo "</pre>";
   // }
-  echo "Connected successfully";
 }catch(PDOExepcion $err) {
   echo "Connection failed: " . $err->getMessage();
 }

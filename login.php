@@ -1,37 +1,30 @@
 <?php
   require "db.php";
   $error = null;
-  $sucess = null;
   if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])) {
+    if( empty($_POST['email']) || empty($_POST['password']) ) {
       $error = 'Please fill all the fields';
     }else if(!str_contains($_POST['email'], '@')){
       $error = 'Incorrect email format';
     }else{
-      $stmt = $conn->prepare('SELECT * FROM users WHERE email = :email');
+      $stmt = $conn->prepare('SELECT * FROM users WHERE email = :email LIMIT 1');
       $stmt->execute([':email' => $_POST['email']]);
       if($stmt->rowCount() == 0){
-        $stmt = $conn->prepare('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
-        $stmt->execute(
-          [
-            ':name' => $_POST['name'],
-            ':email' => $_POST['email'],
-            ':password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
-          ]
-        );
-
-        $stmt = $conn->prepare('SELECT * FROM users WHERE email = :email LIMIT 1');
-        $stmt->execute([':email' => $_POST['email']]);
-
+        $error = 'wrong email o password';
+      }else{
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        session_start();
+        if(!password_verify($_POST['password'], $user['password'])) {
+          $error = 'wrong email o password';
+        } else {
+          session_start();
 
-        $_SESSION['user'] = $user;
-        
-        header('Location: home.php');
-      }else{
-        $error = 'this user already has an account';
+          unset($user['password']);
+
+          $_SESSION['user'] = $user;
+          
+          header('Location: home.php');
+        }
       }
     }
   }
@@ -45,16 +38,9 @@
             <div class="alert alert-danger"><?= $error ?></div>
           <?php endif ?>
           <div class="card">
-            <div class="card-header">Register</div>
+            <div class="card-header">Login</div>
             <div class="card-body">
-              <form method="POST" action="register.php">
-                <div class="mb-3 row">
-                  <label for="name" class="col-md-4 col-form-label text-md-end">Name</label>
-
-                  <div class="col-md-6">
-                    <input id="name" type="text" class="form-control" name="name"  autocomplete="name" autofocus>
-                  </div>
-                </div>
+              <form method="POST" action="login.php">
 
                 <div class="mb-3 row">
                   <label for="email" class="col-md-4 col-form-label text-md-end">Email</label>

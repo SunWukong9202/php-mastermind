@@ -1,12 +1,16 @@
 <?php 
 require "db.php";
 
-$contacts = $conn->query("SELECT * FROM contacts");
-// echo "<pre>";
-// foreach($conn->query("SELECT * FROM contacts") as $row) {
-//     var_dump($row);   
-// }
-// echo "</pre>";
+
+session_start();
+
+if(!isset($_SESSION['user'])) {
+  header('Location: login.php');
+  return;
+}
+
+$contacts = $conn->query("SELECT * FROM contacts WHERE user_id = {$_SESSION['user']['id']}");
+
 ?>
 
 <?php require "partials/header.php" ?>
